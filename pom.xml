@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.hhhaiai.aemulator.runner</groupId>
+    <artifactId>android-emulator</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>jar</packaging>
+    <name>android-emulator</name>
+    <description>android-emulator is install android emulator use Java.</description>
+
+    <url>https://github.com/hhhaiai/android-emulator</url>
+    <inceptionYear>2022</inceptionYear>
+
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <jdk.version>11</jdk.version>
+        <junit.version>4.13.1</junit.version>
+        <gpg.skip>true</gpg.skip>
+        <javadoc.skip>false</javadoc.skip>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.template>${project.basedir}/src/main/java/me/hhhaiai/aemulator/runner/AEVersion.java.template</version.template>
+        <version.file>${project.basedir}/src/main/java/me/hhhaiai/aemulator/runner/AEVersion.java</version.file>
+    </properties>
+    <scm>
+        <url>https://github.com/hhhaiai/android-emulator</url>
+        <connection>scm:git:https://github.com/hhhaiai/android-emulator.git</connection>
+    </scm>
+
+    <organization>
+        <name>hhhaiai</name>
+        <url>https://github.com/hhhaiai</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>hhhaiai</id>
+            <name>hhhaiai</name>
+            <organization>hhhaiai</organization>
+            <email>sanbo.xyz@gmail.com</email>
+            <url>https://github.com/hhhaiai/</url>
+            <roles>
+                <role>admin</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+    <distributionManagement>
+        <snapshotRepository>
+            <!-- need sync to setting.xml -->
+            <id>ossrh</id>
+            <name>OSS Snapshots Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>OSS Staging Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+    <!--&lt;!&ndash;        https://mvnrepository.com/artifact/com.github.netcapture/Jnt GITHUB方式提交的没有出现&ndash;&gt;-->
+    <!--&lt;!&ndash;        延迟 https://repo1.maven.org/maven2/com/github/netcapture/Jnt/&ndash;&gt;-->
+    <!--        <distributionManagement>-->
+    <!--            <repository>-->
+    <!--                <id>github</id>-->
+    <!--                <name>GitHub NetCapture Apache Maven Packages</name>-->
+    <!--                <url>https://maven.pkg.github.com/NetCapture/Jnt</url>-->
+    <!--            </repository>-->
+    <!--        </distributionManagement>-->
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${version.template}</file>
+                    <outputFile>${version.file}</outputFile>
+                    <replacements>
+                        <replacement>
+                            <token>%VERSION%</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-compiler-javac</artifactId>
+                        <version>2.7</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- 以下都为上传jar默认配置不做修改 -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <!-- autoReleaseAfterClose的值为true，则脚本会自动完成在平台上close、release的操作，至此你将成功发布了 -->
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <skip>${gpg.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${javadoc.skip}</skip>
+                            <show>public</show>
+                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <additionalOptions>
+                                <additionalOption>-Xdoclint:none</additionalOption>
+                            </additionalOptions>
+                            <links>
+                                <link>http://docs.oracle.com/javase/6/docs/api</link>
+                            </links>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 打包依赖库 mvn compile assembly:single-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>me.hhhaiai.aemulator.runner.MainApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

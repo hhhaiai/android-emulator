@@ -1,0 +1,9 @@
+//auto general, Don't modify
+package me.hhhaiai.aemulator.runner;
+
+class AEVersion {
+
+  static String version() {
+    return "%VERSION%";
+  }
+}
